@@ -1,0 +1,27 @@
+{
+  "entities": {
+    "Emoji": {
+      "title": "Emoji",
+      "description": "Emoji item registered in the database from Emoji.gg, Discadia, and Discords.com",
+      "type": "object",
+      "properties": {
+        "customId": { "type": "string", "maxLength": 50 },
+        "title": { "type": "string", "maxLength": 100 },
+        "name": { "type": "string", "maxLength": 100 },
+        "category": { "type": "string", "maxLength": 50 },
+        "imageUrl": { "type": "string", "maxLength": 500 },
+        "isAnimated": { "type": "boolean" },
+        "source": { "type": "string", "maxLength": 50 },
+        "submittedBy": { "type": "string", "maxLength": 100 },
+        "faves": { "type": "number" }
+      },
+      "required": ["customId", "title", "name", "category", "imageUrl", "source"]
+    }
+  },
+  "firestore": {
+    "/emojis/{emojiId}": {
+      "schema": { "$ref": "#/entities/Emoji" },
+      "description": "Global catalog of synced Discord emojis"
+    }
+  }
+}

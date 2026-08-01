@@ -1,0 +1,6 @@
+{
+  "name": "Discord Emoji Studio",
+  "description": "Application web de recherche et téléchargement de 5,000+ émojis Discord officiels directement depuis Emoji.gg.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
