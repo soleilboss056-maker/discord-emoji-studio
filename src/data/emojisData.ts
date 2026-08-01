@@ -34,11 +34,11 @@ export const CATEGORY_MAP: Record<number, string> = {
   14: 'Pepe',
 };
 
-// Discadia & Discords.com Curated High-Quality Catalog
+// Curated Emojis with direct numeric IDs for Discord bot commands
 const DISCADIA_EMOJIS: EmojiItem[] = [
   {
-    id: 'dis-101',
-    customId: 'DIS-101',
+    id: '10101',
+    customId: '10101',
     title: 'pepe_business',
     name: 'pepe_business',
     category: 'Pepe',
@@ -49,8 +49,8 @@ const DISCADIA_EMOJIS: EmojiItem[] = [
     faves: 2800,
   },
   {
-    id: 'dis-102',
-    customId: 'DIS-102',
+    id: '10102',
+    customId: '10102',
     title: 'cat_cyberpunk',
     name: 'cat_cyberpunk',
     category: 'Aesthetic',
@@ -61,8 +61,8 @@ const DISCADIA_EMOJIS: EmojiItem[] = [
     faves: 1900,
   },
   {
-    id: 'dis-103',
-    customId: 'DIS-103',
+    id: '10103',
+    customId: '10103',
     title: 'anime_sparkle',
     name: 'anime_sparkle',
     category: 'Anime',
@@ -73,8 +73,8 @@ const DISCADIA_EMOJIS: EmojiItem[] = [
     faves: 3100,
   },
   {
-    id: 'dis-104',
-    customId: 'DIS-104',
+    id: '10104',
+    customId: '10104',
     title: 'gaming_victory',
     name: 'gaming_victory',
     category: 'Gaming',
@@ -88,8 +88,8 @@ const DISCADIA_EMOJIS: EmojiItem[] = [
 
 const DISCORDS_COM_EMOJIS: EmojiItem[] = [
   {
-    id: 'dcd-201',
-    customId: 'DCD-201',
+    id: '20201',
+    customId: '20201',
     title: 'dank_pepe_king',
     name: 'dank_pepe_king',
     category: 'Pepe',
@@ -100,8 +100,8 @@ const DISCORDS_COM_EMOJIS: EmojiItem[] = [
     faves: 5600,
   },
   {
-    id: 'dcd-202',
-    customId: 'DCD-202',
+    id: '20202',
+    customId: '20202',
     title: 'party_blob_hype',
     name: 'party_blob_hype',
     category: 'Blobs',
@@ -112,8 +112,8 @@ const DISCORDS_COM_EMOJIS: EmojiItem[] = [
     faves: 6100,
   },
   {
-    id: 'dcd-203',
-    customId: 'DCD-203',
+    id: '20203',
+    customId: '20203',
     title: 'galaxy_cat_vibe',
     name: 'galaxy_cat_vibe',
     category: 'Animated',
@@ -124,8 +124,8 @@ const DISCORDS_COM_EMOJIS: EmojiItem[] = [
     faves: 7800,
   },
   {
-    id: 'dcd-204',
-    customId: 'DCD-204',
+    id: '20204',
+    customId: '20204',
     title: 'think_galaxy',
     name: 'think_galaxy',
     category: 'Thinking',
@@ -142,7 +142,7 @@ let fullCatalogCache: EmojiItem[] | null = null;
 let isFetching = false;
 
 /**
- * Fetches and merges emojis from Emoji.gg, Discadia, and Discords.com
+ * Fetches and merges emojis with numeric IDs
  */
 export async function fetchFullEmojiCatalog(): Promise<EmojiItem[]> {
   if (fullCatalogCache && fullCatalogCache.length > 0) {
@@ -174,7 +174,7 @@ export async function fetchFullEmojiCatalog(): Promise<EmojiItem[]> {
 
         return {
           id: rawId,
-          customId: `EGG-${rawId}`,
+          customId: rawId,
           title: item.title || 'emoji',
           name: item.title || 'emoji',
           category: categoryName,
@@ -201,11 +201,11 @@ export async function fetchFullEmojiCatalog(): Promise<EmojiItem[]> {
 }
 
 /**
- * Smart similar-name and ID matching engine
+ * Smart similar-name and numeric ID matching engine
  */
 export function isSimilarMatch(query: string, item: EmojiItem): boolean {
   if (!query) return true;
-  const q = query.toLowerCase().trim().replace(/^:/, '').replace(/:$/, '');
+  const q = query.toLowerCase().trim().replace(/^:/, '').replace(/:$/, '').replace(/^id[:\s]*/i, '');
   if (!q) return true;
 
   const customId = item.customId.toLowerCase();
@@ -214,8 +214,8 @@ export function isSimilarMatch(query: string, item: EmojiItem): boolean {
   const name = item.name.toLowerCase();
   const category = item.category.toLowerCase();
 
-  // 1. ID Match (customId or rawId)
-  if (customId.includes(q) || rawId === q || (q.length >= 2 && rawId.includes(q))) {
+  // 1. Direct Numeric / ID Match
+  if (rawId === q || customId === q || customId.includes(q) || rawId.includes(q)) {
     return true;
   }
 
@@ -224,18 +224,11 @@ export function isSimilarMatch(query: string, item: EmojiItem): boolean {
     return true;
   }
 
-  // 3. Clean Alphanumeric comparison (ignoring dashes/underscores)
+  // 3. Clean Alphanumeric comparison
   const cleanQ = q.replace(/[^a-z0-9]/g, '');
   const cleanTitle = title.replace(/[^a-z0-9]/g, '');
-  const cleanCustomId = customId.replace(/[^a-z0-9]/g, '');
 
-  if (cleanQ && (cleanTitle.includes(cleanQ) || cleanCustomId.includes(cleanQ))) {
-    return true;
-  }
-
-  // 4. Token multi-word matching
-  const tokens = q.split(/[\s_,-]+/).filter(Boolean);
-  if (tokens.length > 1 && tokens.every((t) => title.includes(t) || name.includes(t) || category.includes(t))) {
+  if (cleanQ && cleanTitle.includes(cleanQ)) {
     return true;
   }
 
@@ -254,12 +247,9 @@ export function searchEmojiCatalog(
   const sourceList = fullCatalogCache || FALLBACK_CATALOG;
 
   const filtered = sourceList.filter((item) => {
-    // Category filter
     if (category !== 'Tous' && item.category !== category) {
       return false;
     }
-
-    // Smart similar search
     return isSimilarMatch(query, item);
   });
 
@@ -284,7 +274,7 @@ export function searchEmojiCatalog(
  */
 export function findEmojiById(idOrCustomId: string): EmojiItem | undefined {
   const sourceList = fullCatalogCache || FALLBACK_CATALOG;
-  const target = idOrCustomId.toLowerCase().trim();
+  const target = idOrCustomId.toLowerCase().trim().replace(/^id[:\s]*/i, '');
 
   return sourceList.find(
     (e) => e.customId.toLowerCase() === target || e.id.toLowerCase() === target || e.title.toLowerCase() === target
@@ -295,7 +285,7 @@ export function findEmojiById(idOrCustomId: string): EmojiItem | undefined {
 export const FALLBACK_CATALOG: EmojiItem[] = [
   {
     id: '6188',
-    customId: 'EGG-6188',
+    customId: '6188',
     title: 'falco_stare',
     name: 'falco_stare',
     category: 'Logos',
@@ -308,7 +298,7 @@ export const FALLBACK_CATALOG: EmojiItem[] = [
   },
   {
     id: '6001',
-    customId: 'EGG-6001',
+    customId: '6001',
     title: 'pepe_chill',
     name: 'pepe_chill',
     category: 'Pepe',

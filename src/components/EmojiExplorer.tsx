@@ -60,7 +60,7 @@ export const EmojiExplorer: React.FC = () => {
           <div className="flex items-center space-x-1.5">
             <Hash className="w-3.5 h-3.5 text-indigo-400" />
             <span className="font-semibold text-slate-300">
-              Recherche par ID personnalisé (ex: EGG-6188, DIS-101) ou par Nom similaire (ex: pepe, cat, anime)
+              Recherche par ID Numérique (ex: 6188, 8488, 10101) ou par Nom similaire (ex: pepe, cat, anime)
             </span>
           </div>
           <span className="hidden sm:inline-block text-[11px] text-slate-500 font-mono">
@@ -78,7 +78,7 @@ export const EmojiExplorer: React.FC = () => {
               setQuery(e.target.value);
               setCurrentPage(1);
             }}
-            placeholder="Rechercher par ID (ex: EGG-6188, DIS-101) ou mot-clé (ex: pepe, chill, cat, anime)..."
+            placeholder="Rechercher par ID Numérique (ex: 6188, 8488, 10101) ou mot-clé (ex: pepe, chill, cat)..."
             className="w-full bg-slate-950 border border-slate-800 rounded-xl pl-11 pr-24 py-3.5 text-sm text-white placeholder-slate-500 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none transition shadow-inner"
           />
           {query && (
